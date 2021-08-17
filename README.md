@@ -6,17 +6,6 @@ My idea for this fork was to upgrade nvllsvn's GZDoom-Android port, fix the C/C+
 
 This "bundling" has allowed it to reach a more diverse audience of users whom either don't own Doom or are averse to having to find and copy their legally-owned Doom resource files onto their phones. It has reached over 1,000,000 downloads on the Play store.
 
-***IMPORTANT NOTICE***
-
-Like this app?
-
-It wouldn't be possible without the support of the Open Source Software community and the cooperation of many software companies, hardware vendors, and independent software developers.
-
-Nintendo has recently completed legal action (including arrests) against a tool distributor named Uber Chips which could set a dangerous precedent and threaten the sustainability of open source software and the freedom of tech marketplaces. 
-
-
-***END IMPORTANT NOTICE***
-
 
 Due to changes with the Google Play store, I have been unable to distribute my last update for this app on the Play store. The update contained a newer version of the Freedoom wad(s) and some language fixes, and is available on GitHub.
 
