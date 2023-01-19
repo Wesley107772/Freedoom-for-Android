@@ -3,143 +3,54 @@
  * Copyright (C) 2003  Peter Hanappe and others.
  *
  * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License
- * as published by the Free Software Foundation; either version 2 of
+ * modify it under the terms of the GNU Lesser General Public License
+ * as published by the Free Software Foundation; either version 2.1 of
  * the License, or (at your option) any later version.
  *
  * This library is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public
+ * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
- * 02111-1307, USA
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+ * 02110-1301, USA
  */
 
+/*
+ * @file fluidsynth_priv.h
+ * 
+ * lightweight part of fluid_sys.h, containing forward declarations of fluidsynth's private types and private macros
+ *
+ * include this one file in fluidsynth's private header files
+ */
 
 #ifndef _FLUIDSYNTH_PRIV_H
 #define _FLUIDSYNTH_PRIV_H
 
-#if HAVE_CONFIG_H
 #include "config.h"
+
+#include <glib.h>
+
+#if HAVE_STDLIB_H
+#include <stdlib.h> // malloc, free
 #endif
 
-#if defined(__POWERPC__) && !(defined(__APPLE__) && defined(__MACH__))
-#include "config_maxmsp43.h"
-#endif
-
-#if defined(WIN32) && !defined(MINGW32)
-#include "config_win32.h"
+#if HAVE_STDIO_H
+#include <stdio.h> // printf
 #endif
 
 #if HAVE_STRING_H
 #include <string.h>
 #endif
 
-#if HAVE_STDLIB_H
-#include <stdlib.h>
-#endif
-
-#if HAVE_STDIO_H
-#include <stdio.h>
-#endif
-
-#if HAVE_MATH_H
-#include <math.h>
-#endif
-
-#if HAVE_ERRNO_H
-#include <errno.h>
-#endif
-
-#if HAVE_STDARG_H
-#include <stdarg.h>
-#endif
-
-#if HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#if HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-
-#if HAVE_SYS_MMAN_H
-#include <sys/mman.h>
-#endif
-
-#if HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#if HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
-
-#if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-
-#if HAVE_NETINET_TCP_H
-#include <netinet/tcp.h>
-#endif
-
-#if HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
-
-#if HAVE_LIMITS_H
-#include <limits.h>
-#endif
-
-#if HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
-
-#if HAVE_IO_H
-#include <io.h>
-#endif
-
-#if HAVE_WINDOWS_H
-#include <windows.h>
-#endif
-
-/* MinGW32 special defines */
-#ifdef MINGW32
-
-#include <stdint.h>
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-
-#define DSOUND_SUPPORT 1
-#define WINMIDI_SUPPORT 1
-#define STDIN_FILENO 0
-#define STDOUT_FILENO 1
-#define STDERR_FILENO 2
-#define WITHOUT_SERVER 1
-
-#endif
-
-/* Darwin special defines (taken from config_macosx.h) */
-#ifdef DARWIN
-#define MACINTOSH
-#define __Types__
-#define WITHOUT_SERVER 1
-#endif
-
 
 #include "fluidsynth.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /***************************************************************
  *
@@ -152,73 +63,19 @@ typedef float fluid_real_t;
 typedef double fluid_real_t;
 #endif
 
-
-typedef enum {
-  FLUID_OK = 0,
-  FLUID_FAILED = -1
-} fluid_status;
-
-
-#if defined(WIN32)
-typedef SOCKET fluid_socket_t;
+#if defined(SUPPORTS_VLA)
+#  define FLUID_DECLARE_VLA(_type, _name, _len) \
+     _type _name[_len]
 #else
-typedef int fluid_socket_t;
-#define INVALID_SOCKET -1
+#  define FLUID_DECLARE_VLA(_type, _name, _len) \
+     _type* _name = g_newa(_type, (_len))
 #endif
 
 
-/** Integer types  */
-
-#if defined(MINGW32)
-
-/* Windows using MinGW32 */
-typedef int8_t             sint8;
-typedef uint8_t            uint8;
-typedef int16_t            sint16;
-typedef uint16_t           uint16;
-typedef int32_t            sint32;
-typedef uint32_t           uint32;
-typedef int64_t            sint64;
-typedef uint64_t           uint64;
-
-#elif defined(_WIN32)
-
-/* Windows */
-typedef signed __int8      sint8;
-typedef unsigned __int8    uint8;
-typedef signed __int16     sint16;
-typedef unsigned __int16   uint16;
-typedef signed __int32     sint32;
-typedef unsigned __int32   uint32;
-typedef signed __int64     sint64;
-typedef unsigned __int64   uint64;
-
-#elif defined(MACOS9)
-
-/* Macintosh */
-typedef signed char        sint8;
-typedef unsigned char      uint8;
-typedef signed short       sint16;
-typedef unsigned short     uint16;
-typedef signed int         sint32;
-typedef unsigned int       uint32;
-/* FIXME: needs to be verified */
-typedef long long          sint64;
-typedef unsigned long long uint64;
-
-#else
-
-/* Linux & Darwin */
-typedef int8_t             sint8;
-typedef u_int8_t           uint8;
-typedef int16_t            sint16;
-typedef u_int16_t          uint16;
-typedef int32_t            sint32;
-typedef u_int32_t          uint32;
-typedef int64_t            sint64;
-typedef u_int64_t          uint64;
-
-#endif
+/** Atomic types  */
+typedef int fluid_atomic_int_t;
+typedef unsigned int fluid_atomic_uint_t;
+typedef float fluid_atomic_float_t;
 
 
 /***************************************************************
@@ -232,47 +89,181 @@ typedef struct _fluid_tuning_t fluid_tuning_t;
 typedef struct _fluid_hashtable_t  fluid_hashtable_t;
 typedef struct _fluid_client_t fluid_client_t;
 typedef struct _fluid_server_socket_t fluid_server_socket_t;
+typedef struct _fluid_sample_timer_t fluid_sample_timer_t;
+typedef struct _fluid_zone_range_t fluid_zone_range_t;
+typedef struct _fluid_rvoice_eventhandler_t fluid_rvoice_eventhandler_t;
+
+/* Declare rvoice related typedefs here instead of fluid_rvoice.h, as it's needed
+ * in fluid_lfo.c and fluid_adsr.c as well */
+typedef union _fluid_rvoice_param_t
+{
+    void *ptr;
+    int i;
+    fluid_real_t real;
+} fluid_rvoice_param_t;
+enum { MAX_EVENT_PARAMS = 7 }; /**< Maximum number of #fluid_rvoice_param_t to be passed to an #fluid_rvoice_function_t */
+typedef void (*fluid_rvoice_function_t)(void *obj, const fluid_rvoice_param_t param[MAX_EVENT_PARAMS]);
+
+/* Macro for declaring an rvoice event function (#fluid_rvoice_function_t). The functions may only access
+ * those params that were previously set in fluid_voice.c
+ */
+#define DECLARE_FLUID_RVOICE_FUNCTION(name) void name(void* obj, const fluid_rvoice_param_t param[MAX_EVENT_PARAMS])
+
 
 /***************************************************************
  *
  *                      CONSTANTS
  */
 
-#define FLUID_BUFSIZE                64
-
-#ifndef PI
-#define PI                          3.141592654
-#endif
+#define FLUID_BUFSIZE                64         /**< FluidSynth internal buffer size (in samples) */
+#define FLUID_MIXER_MAX_BUFFERS_DEFAULT (8192/FLUID_BUFSIZE) /**< Number of buffers that can be processed in one rendering run */
+#define FLUID_MAX_EVENTS_PER_BUFSIZE 1024       /**< Maximum queued MIDI events per #FLUID_BUFSIZE */
+#define FLUID_MAX_RETURN_EVENTS      1024       /**< Maximum queued synthesis thread return events */
+#define FLUID_MAX_EVENT_QUEUES       16         /**< Maximum number of unique threads queuing events */
+#define FLUID_DEFAULT_AUDIO_RT_PRIO  60         /**< Default setting for audio.realtime-prio */
+#define FLUID_DEFAULT_MIDI_RT_PRIO   50         /**< Default setting for midi.realtime-prio */
+#define FLUID_NUM_MOD                64         /**< Maximum number of modulators in a voice */
 
 /***************************************************************
  *
  *                      SYSTEM INTERFACE
  */
-typedef FILE*  fluid_file;
 
-#define FLUID_MALLOC(_n)             malloc(_n)
+/* Math constants */
+#ifndef M_PI
+#define M_PI 3.1415926535897932384626433832795
+#endif
+
+#ifndef M_LN2
+#define M_LN2 0.69314718055994530941723212145818
+#endif
+
+#ifndef M_LN10
+#define M_LN10 2.3025850929940456840179914546844
+#endif
+
+#define FLUID_M_PI      ((fluid_real_t)M_PI)
+#define FLUID_M_LN2     ((fluid_real_t)M_LN2)
+#define FLUID_M_LN10    ((fluid_real_t)M_LN10)
+
+/* Math functions */
+#if defined WITH_FLOAT && defined HAVE_SINF
+#define FLUID_SIN   sinf
+#else
+#define FLUID_SIN   (fluid_real_t)sin
+#endif
+
+#if defined WITH_FLOAT && defined HAVE_COSF
+#define FLUID_COS   cosf
+#else
+#define FLUID_COS   (fluid_real_t)cos
+#endif
+
+#if defined WITH_FLOAT && defined HAVE_FABSF
+#define FLUID_FABS  fabsf
+#else
+#define FLUID_FABS  (fluid_real_t)fabs
+#endif
+
+#if defined WITH_FLOAT && defined HAVE_POWF
+#define FLUID_POW   powf
+#else
+#define FLUID_POW   (fluid_real_t)pow
+#endif
+
+#if defined WITH_FLOAT && defined HAVE_SQRTF
+#define FLUID_SQRT  sqrtf
+#else
+#define FLUID_SQRT  (fluid_real_t)sqrt
+#endif
+
+#if defined WITH_FLOAT && defined HAVE_LOGF
+#define FLUID_LOGF  logf
+#else
+#define FLUID_LOGF  (fluid_real_t)log
+#endif
+
+/* Memory allocation */
+#define FLUID_MALLOC(_n)             fluid_alloc(_n)
 #define FLUID_REALLOC(_p,_n)         realloc(_p,_n)
-#define FLUID_NEW(_t)                (_t*)malloc(sizeof(_t))
-#define FLUID_ARRAY(_t,_n)           (_t*)malloc((_n)*sizeof(_t))
-#define FLUID_FREE(_p)               free(_p)
-#define FLUID_FOPEN(_f,_m)           fopen(_f,_m)
+#define FLUID_FREE(_p)               fluid_free(_p)
+#define FLUID_NEW(_t)                (_t*)FLUID_MALLOC(sizeof(_t))
+#define FLUID_ARRAY_ALIGNED(_t,_n,_a) (_t*)FLUID_MALLOC((_n)*sizeof(_t) + ((unsigned int)_a - 1u))
+#define FLUID_ARRAY(_t,_n)           FLUID_ARRAY_ALIGNED(_t,_n,1u)
+
+void* fluid_alloc(size_t len);
+
+/* File access */
+#define FLUID_FOPEN(_f,_m)           fluid_fopen(_f,_m)
 #define FLUID_FCLOSE(_f)             fclose(_f)
 #define FLUID_FREAD(_p,_s,_n,_f)     fread(_p,_s,_n,_f)
+
+FILE *fluid_fopen(const char *filename, const char *mode);
+
+#ifdef WIN32
+#define FLUID_FSEEK(_f,_n,_set)      _fseeki64(_f,_n,_set)
+#else
 #define FLUID_FSEEK(_f,_n,_set)      fseek(_f,_n,_set)
+#endif
+
+#define FLUID_FTELL(_f)              fluid_file_tell(_f)
+
+/* Memory functions */
 #define FLUID_MEMCPY(_dst,_src,_n)   memcpy(_dst,_src,_n)
 #define FLUID_MEMSET(_s,_c,_n)       memset(_s,_c,_n)
+
+/* String functions */
 #define FLUID_STRLEN(_s)             strlen(_s)
 #define FLUID_STRCMP(_s,_t)          strcmp(_s,_t)
 #define FLUID_STRNCMP(_s,_t,_n)      strncmp(_s,_t,_n)
 #define FLUID_STRCPY(_dst,_src)      strcpy(_dst,_src)
+#define FLUID_STRTOL(_s,_e,_b)       strtol(_s,_e,_b)
+
+#define FLUID_STRNCPY(_dst,_src,_n) \
+do { strncpy(_dst,_src,_n-1); \
+    (_dst)[(_n)-1]='\0'; \
+}while(0)
+
 #define FLUID_STRCHR(_s,_c)          strchr(_s,_c)
+#define FLUID_STRRCHR(_s,_c)         strrchr(_s,_c)
+
 #ifdef strdup
-#define FLUID_STRDUP(s)              strdup(s)
+#define FLUID_STRDUP(s)          strdup(s)
 #else
-#define FLUID_STRDUP(s) 		    FLUID_STRCPY(FLUID_MALLOC(FLUID_STRLEN(s) + 1), s)
+#define FLUID_STRDUP(s)          FLUID_STRCPY(FLUID_MALLOC(FLUID_STRLEN(s) + 1), s)
 #endif
+
 #define FLUID_SPRINTF                sprintf
 #define FLUID_FPRINTF                fprintf
+
+#if (defined(WIN32) && _MSC_VER < 1900) || defined(MINGW32)
+/* need to make sure we use a C99 compliant implementation of (v)snprintf(),
+ * i.e. not microsofts non compliant extension _snprintf() as it doesn't
+ * reliably null-terminate the buffer
+ */
+#define FLUID_SNPRINTF           g_snprintf
+#else
+#define FLUID_SNPRINTF           snprintf
+#endif
+
+#if (defined(WIN32) && _MSC_VER < 1500) || defined(MINGW32)
+#define FLUID_VSNPRINTF          g_vsnprintf
+#else
+#define FLUID_VSNPRINTF          vsnprintf
+#endif
+
+#if defined(WIN32) && !defined(MINGW32)
+#define FLUID_STRCASECMP         _stricmp
+#else
+#define FLUID_STRCASECMP         strcasecmp
+#endif
+
+#if defined(WIN32) && !defined(MINGW32)
+#define FLUID_STRNCASECMP         _strnicmp
+#else
+#define FLUID_STRNCASECMP         strncasecmp
+#endif
+
 
 #define fluid_clip(_val, _min, _max) \
 { (_val) = ((_val) < (_min))? (_min) : (((_val) > (_max))? (_max) : (_val)); }
@@ -285,21 +276,53 @@ typedef FILE*  fluid_file;
 #define FLUID_FLUSH()                fflush(stdout)
 #endif
 
+/* People who want to reduce the size of the may do this by entirely
+ * removing the logging system. This will cause all log messages to
+ * be discarded at compile time, allowing to save about 80 KiB for
+ * the compiled binary.
+ */
+#if 0
+#define FLUID_LOG                    (void)sizeof
+#else
 #define FLUID_LOG                    fluid_log
-
-#ifndef M_PI
-#define M_PI 3.1415926535897932384626433832795
 #endif
 
+#if defined(DEBUG) && !defined(NDEBUG)
+#define FLUID_ASSERT(a) g_assert(a)
+#else
+#define FLUID_ASSERT(a)
+#endif
 
-#define FLUID_ASSERT(a,b)
-#define FLUID_ASSERT_P(a,b)
+#define FLUID_LIKELY G_LIKELY
+#define FLUID_UNLIKELY G_UNLIKELY
 
-char* fluid_error(void);
+/* Misc */
+#if defined(__INTEL_COMPILER)
+#define FLUID_RESTRICT restrict
+#elif defined(__clang__) || defined(__GNUC__) || defined(__GNUG__)
+#define FLUID_RESTRICT __restrict__
+#elif defined(_MSC_VER) && _MSC_VER >= 1400
+#define FLUID_RESTRICT __restrict
+#else
+#warning "Dont know how this compiler handles restrict pointers, refuse to use them."
+#define FLUID_RESTRICT
+#endif
+
+#define FLUID_N_ELEMENTS(struct)  (sizeof (struct) / sizeof (struct[0]))
+#define FLUID_MEMBER_SIZE(struct, member)  ( sizeof (((struct *)0)->member) )
 
 
-/* Internationalization */
-#define _(s) s
+#define fluid_return_if_fail(cond) \
+if(cond) \
+    ; \
+else \
+    return
 
+#define fluid_return_val_if_fail(cond, val) \
+ fluid_return_if_fail(cond) (val)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _FLUIDSYNTH_PRIV_H */
