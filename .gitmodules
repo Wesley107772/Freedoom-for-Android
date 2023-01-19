@@ -4,7 +4,6 @@
 [submodule "doom/src/main/jni/MobileTouchControls"]
 	path = doom/src/main/jni/MobileTouchControls
 	url = https://github.com/emileb/MobileTouchControls.git
-[submodule "doom/src/main/jni/SDL"]
-	path = doom/src/main/jni/SDL
+[submodule "doom\\src\\main\\jni\\SDL"]
+	path = doom\\src\\main\\jni\\SDL
 	url = https://github.com/libsdl-org/SDL.git
-	
