@@ -7,3 +7,4 @@
 [submodule "doom/src/main/jni/SDL"]
 	path = doom/src/main/jni/SDL
 	url = https://github.com/libsdl-org/SDL.git
+	
