@@ -1,12 +1,12 @@
 [submodule "doom/src/main/jni/jpeg8d"]
 	path = doom/src/main/jni/jpeg8d
-	url = https://github.com/nvllsvm/jpeg8d.git
+	url = https://github.com/dav1nci/jpeg8d.git
 [submodule "doom/src/main/jni/openal-soft-android"]
 	path = doom/src/main/jni/openal-soft-android
-	url = https://github.com/nvllsvm/openal-soft-android.git
+	url = https://github.com/AerialX/openal-soft-android.git
 [submodule "doom/src/main/jni/gzdoom"]
 	path = doom/src/main/jni/gzdoom
-	url = https://github.com/coelckers/gzdoom.git
+	url = https://github.com/ZDoom/gzdoom.git
 [submodule "doom/src/main/jni/MobileTouchControls"]
 	path = doom/src/main/jni/MobileTouchControls
-	url = https://github.com/nvllsvm/MobileTouchControls.git
+	url = https://github.com/emileb/MobileTouchControls.git
